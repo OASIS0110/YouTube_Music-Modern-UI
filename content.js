@@ -19,12 +19,14 @@
         bg: null, wrapper: null,
         title: null, artist: null, artwork: null,
         lyrics: null, input: null, settings: null,
-        btnArea: null, uploadMenu: null, deleteDialog: null
+        btnArea: null, uploadMenu: null, deleteDialog: null,
+        settingsBtn: null
     };
 
     let hideTimer = null;
     let uploadMenuGlobalSetup = false;
     let deleteDialogGlobalSetup = false;
+    let settingsOutsideClickSetup = false;
 
     const handleInteraction = () => {
         if (!ui.btnArea) return;
@@ -485,6 +487,17 @@
                 ui.settings.classList.remove('active');
             };
         }
+
+        if (!settingsOutsideClickSetup) {
+            settingsOutsideClickSetup = true;
+            document.addEventListener('click', (ev) => {
+                if (!ui.settings) return;
+                if (!ui.settings.classList.contains('active')) return;
+                if (ui.settings.contains(ev.target)) return;
+                if (ui.settingsBtn && ui.settingsBtn.contains(ev.target)) return;
+                ui.settings.classList.remove('active');
+            }, true);
+        }
     }
 
     function initLayout() {
@@ -531,6 +544,7 @@
 
             if (b === uploadBtnConfig) setupUploadMenu(btn);
             if (b === trashBtnConfig)  setupDeleteDialog(btn);
+            if (b === settingsBtnConfig) ui.settingsBtn = btn;
         });
 
         ui.input = createEl('input');
@@ -580,8 +594,11 @@
         const key = `${meta.title}///${meta.artist}`;
         if (currentKey !== key) {
             currentKey = key;
+            // 歌詞データをクリアして、前の曲の歌詞に基づいたスクロールが発生しないようにする
+            lyricsData = [];
             updateMetaUI(meta);
-            dynamicLines = null; // 曲が変わったらクリア
+            // スクロール位置を一番上にリセットする
+            if (ui.lyrics) ui.lyrics.scrollTop = 0;
             loadLyrics(meta);
         }
     };
@@ -782,6 +799,11 @@
                 }
             }
         }
+        // 非同期処理中に曲が変わった場合に備えて、現在の曲と一致するか確認するためのキー（実験的）
+        const thisKey = `${meta.title}///${meta.artist}`;
+        if (thisKey !== currentKey) return;
+
+        let data = await storage.get(currentKey);
 
         if (!data) {
             try {
@@ -801,20 +823,9 @@
 
                 if (res?.success) {
                     data = res.lyrics || '';
-
-                    if (Array.isArray(res.dynamicLines) && res.dynamicLines.length) {
-                        dynamicLines = res.dynamicLines;
-                    }
-
-                    if (data) {
-                        if (dynamicLines) {
-                            storage.set(currentKey, {
-                                lyrics: data,
-                                dynamicLines: dynamicLines
-                            });
-                        } else {
-                            storage.set(currentKey, data);
-                        }
+                    // 現在も同じ曲を表示している場合のみ保存
+                    if (data && thisKey === currentKey) {
+                        storage.set(currentKey, data);
                     }
                 } else {
                     console.warn('Lyrics API failed:', res?.error);
@@ -823,6 +834,9 @@
                 console.warn('Lyrics API fetch failed', e);
             }
         }
+
+        
+        if (thisKey !== currentKey) return;
 
         if (!data) {
             renderLyrics([]);
@@ -837,6 +851,9 @@
             finalLines = await applyTranslations(parsed, videoUrl);
         }
 
+        
+        if (thisKey !== currentKey) return;
+
         lyricsData = finalLines;
         renderLyrics(finalLines);
     }
@@ -844,6 +861,8 @@
     function renderLyrics(data) {
         if (!ui.lyrics) return;
         ui.lyrics.innerHTML = '';
+        // 修正レンダリング時に確実にスクロール位置をリセット
+        ui.lyrics.scrollTop = 0;
 
         const hasData = Array.isArray(data) && data.length > 0;
         document.body.classList.toggle('ytm-no-lyrics', !hasData);
