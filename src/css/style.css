@@ -192,7 +192,7 @@ body.ytm-custom-layout ytmusic-search-box {
   font-weight: 600;
 }
 
-/* Apple Music っぽい「翻訳がふわっと現れる」アニメーション */
+/* 翻訳アニメーション */
 body.ytm-custom-layout.ytm-has-timestamp .lyric-line .lyric-translation {
     opacity: 0;
     max-height: 0;
@@ -209,7 +209,7 @@ body.ytm-custom-layout.ytm-has-timestamp .lyric-line.show-translation .lyric-tra
     margin-top: 6px;
 }
 
-/* ★ Apple Music 風：1文字ずつ光る演出 */
+/* 1文字ずつ光る演出 */
 body.ytm-custom-layout .lyric-line .lyric-char {
     display: inline-block;
     transition:
@@ -264,12 +264,12 @@ body.ytm-custom-layout .right-controls {
     align-items: center !important;
 }
 
-/* 右側の音量スライダーを寄せる＋横幅を少し確保 */
+/* 右側の音量スライダー */
 body.ytm-custom-layout .right-controls tp-yt-paper-slider {
     max-width: 150px !important;
 }
 
-/* 再生位置バーだけレイアウトをいじる（音量バーには触らない） */
+/* 再生位置バーレイアウト */
 body.ytm-custom-layout .middle-controls { 
     flex: 1 1 auto !important; 
     justify-content: center !っと; 
@@ -301,12 +301,12 @@ body.ytm-custom-layout ytmusic-player-bar .content-info-wrapper {
     display: none !important;
 }
 
-/* IMMERSION トグルは完全に非表示 */
+/* IMMERSION トグル非表示（※音量操作とかぶります） */
 #my-mode-toggle {
     display: none !important;
 }
 
-/* === アップロードメニュー（グラス UI） === */
+/* === アップロードメニュー === */
 .ytm-upload-menu {
     position: absolute;
     bottom: 52px;
@@ -434,7 +434,7 @@ body.ytm-custom-layout ytmusic-player-bar .content-info-wrapper {
     background: rgba(255, 61, 80, 1);
 }
 
-/* === Apple Music っぽく背景をゆっくり大きく動かす === */
+/* === 背景をゆっくり動かす === */
 @keyframes ytmBgDrift {
   0% {
     transform: scale(1.15) translate3d(-3%, -3%, 0);
