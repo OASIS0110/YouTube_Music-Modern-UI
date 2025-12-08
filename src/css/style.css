@@ -1851,18 +1851,41 @@ body.ytm-custom-layout ytmusic-player-bar
   font-size: 14px;
 }
 
-/* 1曲以内に同期済み → 緑 */
+
+/* クラウドシンクのやつ */
+
 .dr-cloud-sync-btn.cloud-ok .dr-cloud-emoji {
   color: #22c55e; /* 緑 */
 }
-
-/* 2曲以上同期できていない → 赤 */
 .dr-cloud-sync-btn.cloud-ng .dr-cloud-emoji {
   color: #ef4444; /* 赤 */
 }
 
 .dr-cloud-sync-btn .dr-cloud-time {
   opacity: 0.8;
+}
+
+#ytm-toast {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  max-width: 320px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 13px;
+  z-index: 999999;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#ytm-toast.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 
